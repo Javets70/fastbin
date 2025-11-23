@@ -15,8 +15,19 @@ tasks:
     desc: Lint code
     cmds:
       - uv run ruff check .
+
+# NEW TASK: Dependency to stop local service
+# DATABASE TASKS
+  db-local-stop:
+    desc: "Stop and disable the local system PostgreSQL service (Linux/WSL only)."
+    # WARNING: This will require a sudo password prompt.
+    cmds:
+      - sudo systemctl stop postgresql || true # || true ignores error if service isn't running
+      - sudo systemctl disable postgresql || true
+
   db-up:
     desc: "Start PostgreSQL container"
+    deps: [db-local-stop]
     cmds:
       - "{{.DOCKER}} compose up -d db"
 
@@ -32,6 +43,7 @@ tasks:
 
   db-reset:
     desc: "Reset database (WARNING: destroys all data)"
+    deps: [db-local-stop]
     cmds:
       - "{{.DOCKER}} compose down -v"
       - "{{.DOCKER}} compose up -d db"
@@ -57,8 +69,14 @@ tasks:
       - alembic history
 
   # TESTING
+  create-test-db:
+    desc: "Create Testing Database"
+    cmds:
+      - '{{.DOCKER}} exec -it fastbin_db psql -U postgres -c "CREATE DATABASE fastbin_test;"'
+      
   test-db:
     desc: "Run database tests"
+    deps: [db-local-stop , create-test-db]
     cmds:
       - pytest tests/test_database.py -v
     
