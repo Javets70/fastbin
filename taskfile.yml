@@ -1,0 +1,64 @@
+version: '3'
+env:
+  DOCKER: docker.exe
+
+tasks:
+  run-dev:
+    cmds:
+      - uv run uvicorn app.main:app --reload
+    desc: Run uvicorn development server
+  format:
+    desc: Format code
+    cmds:
+      - uv run ruff format .
+  lint:
+    desc: Lint code
+    cmds:
+      - uv run ruff check .
+  db-up:
+    desc: "Start PostgreSQL container"
+    cmds:
+      - "{{.DOCKER}} compose up -d db"
+
+  db-down:
+    desc: "Stop PostgreSQL container"
+    cmds:
+      - "{{.DOCKER}} compose down"
+
+  db-logs:
+    desc: "View database logs"
+    cmds:
+      - "{{.DOCKER}} compose logs -f db"
+
+  db-reset:
+    desc: "Reset database (WARNING: destroys all data)"
+    cmds:
+      - "{{.DOCKER}} compose down -v"
+      - "{{.DOCKER}} compose up -d db"
+
+  db-migrate:
+    desc: "Run database migrations"
+    cmds:
+      - alembic upgrade head
+
+  db-migrate-create:
+    desc: "Create new migration (usage: task db:migrate:create -- 'message')"
+    cmds:
+      - alembic revision --autogenerate -m "{{.CLI_ARGS}}"
+
+  db-rollback:
+    desc: "Rollback last migration"
+    cmds:
+      - alembic downgrade -1
+
+  db-history:
+    desc: "Show migration history"
+    cmds:
+      - alembic history
+
+  # TESTING
+  test-db:
+    desc: "Run database tests"
+    cmds:
+      - pytest tests/test_database.py -v
+    

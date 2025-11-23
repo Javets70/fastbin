@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}App Base{% endblock %}</title>
+    
+    <!-- Custom Head Styles/Scripts -->
+    {% block head %}{% endblock %}
+</head>
+<body>
+
+    <!-- Main Content Area -->
+    <main>
+        <!-- This is where the content of extended templates will go -->
+        {% block content %}
+        <div>
+            <h1>STATIC PAGE WORKS</h1>
+            <img src="{{url_for('static' , path='/images/ok-handwebp.webp')}}"/>
+        </div>
+        {% endblock %}
+    </main>
+    
+    <!-- Scripts at the end of the body -->
+    {% block scripts %}{% endblock %}
+
+</body>
+</html>
