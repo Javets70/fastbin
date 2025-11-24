@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta, timezone
-from fastapi.exceptions import HTTPException
-from fastapi import status
+from fastapi import HTTPException, status
 
 import jwt
 from passlib.context import CryptContext

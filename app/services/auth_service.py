@@ -4,9 +4,9 @@ from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
-from app.models.user import User
+from app.models import User
 from app.schemas import UserCreate, UserLogin
-from app.utils.security import create_access_token, hash_password, verify_password
+from app.core.security import create_access_token, hash_password, verify_password
 
 
 class AuthService:

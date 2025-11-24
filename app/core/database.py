@@ -37,7 +37,7 @@ async def init_db():
 
 
 # Dependency for FastAPI
-async def get_db() -> AsyncGenerator[AsyncSession, None]:
+async def get_db() -> AsyncSession:
     """
     Database session dependency for FastAPI endpoints.
     Usage: db: AsyncSession = Depends(get_db)

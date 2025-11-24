@@ -1,5 +1,5 @@
 from typing_extensions import override
-from sqlalchemy import String, DateTime, func
+from sqlalchemy import String, DateTime, func, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
 from app.core.database import Base
@@ -27,6 +27,7 @@ class User(Base):
         onupdate=func.now(),
         nullable=False,
     )
+    is_active: Mapped[bool] = mapped_column(Boolean, server_default=True)
 
     # Relationships
     pastes: Mapped[list["Paste"]] = relationship(

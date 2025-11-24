@@ -54,13 +54,14 @@ class UserResponse(BaseModel):
     created_at: datetime
 
     class Config:
-        from_attributes = True  # Allows SQLAlchemy model conversion
+        from_attributes = True
 
 
 class Token(BaseModel):
     access_token: str
+    refresh_token: str
     token_type: str
 
 
-class TokenData(BaseModel):
-    email: str | None = None
+class TokenRefresh(BaseModel):
+    refresh_token: str
