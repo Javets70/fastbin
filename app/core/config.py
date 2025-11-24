@@ -45,6 +45,7 @@ class Settings(BaseSettings):
     )
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 7
 
     # Rate Limiting
     RATE_LIMIT_ENABLED: bool = True
@@ -64,6 +65,13 @@ class Settings(BaseSettings):
     # Analytics
     ANALYTICS_BATCH_SIZE: int = 100
     ANALYTICS_RETENTION_DAYS: int = 90
+
+    # OAUTH
+    GOOGLE_OAUTH_CLIENT_ID: str
+    GOOGLE_OAUTH_CLIENT_SECRET: str
+
+    GITHUB_OAUTH_CLIENT_ID: str
+    GITHUB_OAUTH_CLIENT_SECRET: str
 
 
 @lru_cache
