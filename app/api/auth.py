@@ -1,13 +1,13 @@
-from fastapi import APIRouter, status, Depends
+from fastapi import APIRouter, Depends, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
 from app.core.security import create_access_token, create_refresh_token
-from app.schemas import UserCreate, UserLogin, UserResponse, Token, TokenRefresh
 from app.middleware import AuthMiddleware
-from app.services import AuthService
 from app.models import User
+from app.schemas import Token, TokenRefresh, UserCreate, UserResponse
+from app.services import AuthService
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -59,5 +59,6 @@ async def get_current_user_info(
 
 @router.post("/logout")
 async def logout(current_user: User = Depends(AuthMiddleware.get_current_active_user)):
+    # TODO
     # IMPLEMENT TOKEN BLACKLISTING
     return {"message": "Successfully logged out"}
