@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqalachemy.dialects.postgresql import JSONB
+# from sqalachemy.dialects.postgresql import JSONB
 from sqlalchemy import Boolean, DateTime, String, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from typing_extensions import override
@@ -27,12 +27,14 @@ class User(Base):
         onupdate=func.now(),
         nullable=False,
     )
-    is_active: Mapped[bool] = mapped_column(Boolean, server_default=True)
-    _metadata: Mapped[dict] = mapped_column(JSONB, nullable=True, server_default="{}")
+    is_active: Mapped[bool] = mapped_column(Boolean, server_default="TRUE")
 
     # Relationships
     pastes: Mapped[list["Paste"]] = relationship(
         "Paste", back_populates="user", cascade="all, delete-orphan"
+    )
+    tokens: Mapped[list["Token"]] = relationship(
+        "Token", back_populates="user", cascade="all, delete-orphan"
     )
 
     @override

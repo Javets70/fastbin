@@ -24,24 +24,17 @@ AsyncSessionLocal = async_sessionmaker(
 )
 
 
-# Base class for models
 class Base(DeclarativeBase):
     pass
 
 
-# Database initialization
 async def init_db():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     print("Database tables created successfully")
 
 
-# Dependency for FastAPI
 async def get_db() -> AsyncSession:
-    """
-    Database session dependency for FastAPI endpoints.
-    Usage: db: AsyncSession = Depends(get_db)
-    """
     async with AsyncSessionLocal() as session:
         try:
             yield session

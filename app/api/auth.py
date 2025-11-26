@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
-from app.core.security import create_access_token, create_refresh_token
+from app.core.security import create_token_pair, blacklist_token_pair
 from app.middleware import AuthMiddleware
 from app.models import User
 from app.schemas import Token, TokenRefresh, UserCreate, UserResponse
@@ -26,8 +26,9 @@ async def login(
 ):
     user = AuthService.authenticate_user(db, form_data)
 
-    access_token = create_access_token(data={"sub": user.id})
-    refresh_token = create_refresh_token(data={"sub": user.id})
+    # access_token = create_access_token(data={"sub": user.id})
+    # refresh_token = create_refresh_token(data={"sub": user.id})
+    access_token, refresh_token = create_token_pair(db=db, data={"sub": user.id})
 
     return {
         "access_token": access_token,
@@ -36,18 +37,19 @@ async def login(
     }
 
 
-@router.post("/refresh", response_model=Token)
-async def refresh_token(token_data: TokenRefresh, db: AsyncSession = Depends(get_db)):
-    user = AuthService.get_user_from_token(db, token_data.refresh_token)
+# TODO IMPLEMENT REFRESH
+# @router.post("/refresh", response_model=Token)
+# async def refresh_token(token_data: TokenRefresh, db: AsyncSession = Depends(get_db)):
+#     user = AuthService.get_user_from_token(db, token_data.refresh_token)
 
-    access_token = create_access_token(data={"sub": user.id})
-    refresh_token = create_refresh_token(data={"sub": user.id})
+#     access_token = create_access_token(data={"sub": user.id})
+#     refresh_token = create_refresh_token(data={"sub": user.id})
 
-    return {
-        "access_token": access_token,
-        "refresh_token": refresh_token,
-        "token_type": "bearer",
-    }
+#     return {
+#         "access_token": access_token,
+#         "refresh_token": refresh_token,
+#         "token_type": "bearer",
+#     }
 
 
 @router.get("/me", response_model=UserResponse)
@@ -58,7 +60,9 @@ async def get_current_user_info(
 
 
 @router.post("/logout")
-async def logout(current_user: User = Depends(AuthMiddleware.get_current_active_user)):
-    # TODO
-    # IMPLEMENT TOKEN BLACKLISTING
+async def logout(
+    current_user: User = Depends(AuthMiddleware.get_current_active_user),
+    db: AsyncSession = Depends(get_db),
+):
+    blacklist_token_pair(db=db, jit=current_user.tokens[0].jti)
     return {"message": "Successfully logged out"}
